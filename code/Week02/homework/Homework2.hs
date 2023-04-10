@@ -26,10 +26,10 @@ PlutusTx.unstableMakeIsData ''MyRedeemer
 {-# INLINABLE mkValidator #-}
 -- Create a validator that unlocks the funds if MyRedemeer's flags are different
 mkValidator :: () -> MyRedeemer -> PlutusV2.ScriptContext -> Bool
-mkValidator = undefined
+mkValidator _ redeemer _ = not $ flag1 redeemer == flag2 redeemer
 
 wrappedVal :: BuiltinData -> BuiltinData -> BuiltinData -> ()
-wrappedVal = undefined
+wrappedVal a b c = check $ mkValidator (unsafeFromBuiltinData a) (unsafeFromBuiltinData b) (unsafeFromBuiltinData c) 
 
 validator :: PlutusV2.Validator
-validator = undefined
+validator = PlutusV2.mkValidatorScript $$(PlutusTx.compile [|| wrappedVal ||])
